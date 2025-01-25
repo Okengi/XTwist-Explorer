@@ -1,4 +1,5 @@
 from Linear_Congruential_Generator import LCG
+from MersenneTwister import MersenneTwister
 import matplotlib.pyplot as plt
 import random
 
@@ -35,7 +36,7 @@ def set_up_LCG_Controls():
     sliderSeed_label = tk.Label(control_frame, text="Seed")
     sliderSeed_label.grid(row=1, column=2)
 
-    sliderN = tk.Scale(control_frame, from_=1, to=1000,variable=anzahl, command=update_all_visuals, width=10, length=100, orient="horizontal" )
+    sliderN = tk.Scale(control_frame, from_=1, to=1000,variable=anzahlLCG, command=update_all_visuals, width=10, length=100, orient="horizontal" )
     sliderN.grid(row=2, column=1)
     slider_label = tk.Label(control_frame, text="Sample Size")
     slider_label.grid(row=2, column=0)
@@ -73,9 +74,48 @@ def set_preset_Borderland(_=None):
     c3.deselect()
     update_all_visuals()
 
+def mersenneTwister(_=None):   
+    n = 500
+    bins = 10
+    
 
+    lcg_werte = [mt.random() for _ in range(n)]
+
+    for widget in mt_histogram_frame.winfo_children():
+        widget.destroy()
+        
+   
+    fig = Figure(figsize=(6,4))
+    plot = fig.add_subplot()
+    plot.hist(lcg_werte, alpha=0.5, bins=bins, density=True, label="LCG", color="red", edgecolor="black")
+    plot.set_title("Histogram Mersenne Twister")
+    plot.set_xlabel("Werte")
+    plot.set_ylabel("Dichte")
+
+    # Matplotlib-Canvas in Tkinter einbetten
+    canvas = FigureCanvasTkAgg(fig, master=mt_histogram_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+def mersenneTwisterScatter():
+    fig = Figure(figsize=(6,4))
+    plot = fig.add_subplot()
+    n = 5000
 
     
+
+    lcg_werte = [mt.random() for _ in range(n)]
+
+    for widget in mt_satter_frame.winfo_children():
+        widget.destroy()
+
+    plot.scatter(lcg_werte[:-1], lcg_werte[1:], alpha=0.5, color="red")
+    plot.set_title("MT Scatter Test")
+    plot.set_xlabel("x[i]")
+    plot.set_ylabel("x[i+1]") 
+    canvas = FigureCanvasTkAgg(fig, master=mt_satter_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 def update_function_label(_=None):
     formula = f"$X_{{n+1}} = ({multiplicator.get()} \\cdot X_n + {increment.get()})_{{mod}} {modules.get()}$"
@@ -99,7 +139,7 @@ def histogram(_=None):
     lcg.X_0 = seed.get()
     lcg.X = seed.get()
     
-    n = anzahl.get()
+    n = anzahlLCG.get()
     bins = binsC.get()
 
     lcg_werte = [lcg.next() for _ in range(n)]
@@ -122,7 +162,7 @@ def histogram(_=None):
 
 def scetter(_=None):
     # LCG Scatterplot
-    n = anzahl.get()
+    n = anzahlLCG.get()
     fig = Figure(figsize=(6,4))
     plot = fig.add_subplot()
     lcg_werte = [lcg.next() for _ in range(n)]
@@ -142,7 +182,7 @@ def scetter(_=None):
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 def scetter3d():
-    n = anzahl.get()
+    n = anzahlLCG.get()
     fig = Figure(figsize=(6, 4))
     ax = fig.add_subplot(111, projection='3d')
 
@@ -176,6 +216,7 @@ def update_all_visuals(_=None):
         scetter()
 
 lcg = LCG()
+mt = MersenneTwister(1956)
 
 window = tk.Tk()
 window.title("Zufallszahlen")
@@ -185,7 +226,7 @@ modules = tk.IntVar(value=lcg.m)
 multiplicator = tk.IntVar(value=lcg.a)
 increment = tk.IntVar(value=lcg.c)
 seed = tk.IntVar(value=lcg.X_0)
-anzahl = tk.IntVar(value=1000)
+anzahlLCG = tk.IntVar(value=1000)
 binsC = tk.IntVar(value=10)
 dreiD = tk.BooleanVar(value=False)
 
@@ -197,12 +238,23 @@ tapsController.add(LCG_Tap_Screen, text="LCG")
 
 
 MT_Tap_Screen = ttk.Frame(tapsController)
-tapsController.add(MT_Tap_Screen, text="MT")
+tapsController.add(MT_Tap_Screen, text="Mersenne Twister")
+
+mt_histogram_frame = tk.Frame(MT_Tap_Screen)
+mt_histogram_frame.grid(row=1, column=0)
+
+mt_satter_frame = tk.Frame(MT_Tap_Screen)
+mt_satter_frame.grid(row=1, column=1)
+
+mt_controls_frame = tk.Frame(MT_Tap_Screen)
+mt_controls_frame.grid(row=0, column=0)
+
+Vergleich_Tap_Screen = ttk.Frame(tapsController)
+tapsController.add(Vergleich_Tap_Screen, text="Vergleich")
 
 control_frame = tk.Frame(LCG_Tap_Screen)
-control_frame.config(borderwidth=3, highlightbackground="green")
 control_frame.grid(row=	0, column=0)
-#control_frame.grid(row=0, column=0)
+
 set_up_LCG_Controls()
 formula_frame = tk.Frame(LCG_Tap_Screen)
 formula_frame.grid(row=0,column=1)
@@ -210,17 +262,16 @@ b = tk.Button(control_frame, text="Apply", command=update_all_visuals)
 b.grid(row=4, column=0)
 b3d = tk.Button(control_frame, text="3d", command=switche)
 b3d.grid(row=4, column=1)
-#b.grid(row=1,column=1)
-#formula_frame.grid(row=0, column=1, sticky="nsew")
 
 
 plot_frame = tk.Frame(LCG_Tap_Screen)
 plot_frame.grid(row=1, column=0)
-#plot_frame.grid(row=1,column=0)
 
 plot_frame_scatter = tk.Frame(LCG_Tap_Screen)
 plot_frame_scatter.grid(row=1, column=1)
 
 
 update_all_visuals()
+mersenneTwister()
+mersenneTwisterScatter()
 window.mainloop()

@@ -17,6 +17,7 @@ class LCG:
 
     def reset(self):
         self.X = self.X_0
+        self.P = -1
     
     def periodLength(self):
         if self.P >= 0:

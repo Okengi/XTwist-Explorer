@@ -40,7 +40,7 @@ class MersenneTwister():
         self.pos_index = 0
     
     def temper(self):
-        if self.pos_index > self.n:
+        if self.pos_index > self.n - 1:
             self.twist()
         y1 = self.MT[self.pos_index]
         y2 = y1 ^ ((y1 >> self.u) & self.d)
@@ -65,7 +65,7 @@ class MersenneTwister():
         return int(self.random()*(b-a)+a)
     
 
-
-mt = MersenneTwister(1958)
-for _ in range(10):
-    print(mt.randint(0, 100))
+if __name__ == "__main__":
+    mt = MersenneTwister(1958)
+    for _ in range(10):
+        print(mt.randint(0, 100))
