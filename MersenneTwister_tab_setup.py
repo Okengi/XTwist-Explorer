@@ -9,6 +9,12 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from mpl_toolkits.mplot3d import Axes3D
 
 def set_up_mt_tab(tap):
+
+    def show_stats(_=None):
+        for i in range(10):
+            for j in range(5):
+                ct.CTkLabel(mt_controls_frame, text=mt.MT[j + 10 * i]).grid(row=j, column=i)
+
     def mersenneTwister(_=None):   
         n = 500
         bins = 10
@@ -68,3 +74,4 @@ def set_up_mt_tab(tap):
 
     mersenneTwister()
     mersenneTwisterScatter()
+    show_stats()

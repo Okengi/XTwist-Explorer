@@ -9,14 +9,17 @@ from mpl_toolkits.mplot3d import Axes3D
 from statsmodels.graphics.tsaplots import plot_acf
 import numpy as np
 import scipy.stats
+from scipy.stats import norm
 
 def set_up_LCG_tab(tab):
 
     def update_all_visuals(_=None):
+        sam_labell.configure(text=anzahl.get())
+        bin_labell.configure(text=binsC.get())
         lcg.reset()
         update_function_label()
         histogram(lcg)
-        autocorelation()
+        #autocorelation()
         if dreiD.get():
             scetter3d()
         else:
@@ -54,51 +57,72 @@ def set_up_LCG_tab(tab):
         canvas = FigureCanvasTkAgg(fig, master=scatter_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-    
     def set_up_LCG_Controls():
-        entryM = ct.CTkEntry(control_frame, width=100, textvariable=modules)
-        entryM.grid(row=0, column=1)
+        # Configure rows and columns for dynamic resizing
+        control_frame.grid_rowconfigure(tuple(range(6)), weight=1)
+        control_frame.grid_columnconfigure(tuple(range(5)), weight=1)
 
-        sliderM_label = ct.CTkLabel(control_frame, text="Moduls")
-        sliderM_label.grid(row=0, column=0)
+        # Entries and labels
+        entryM = ct.CTkEntry(control_frame, width=150, textvariable=modules)
+        entryM.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+        sliderM_label = ct.CTkLabel(control_frame, text="Modulus:")
+        sliderM_label.grid(row=0, column=0, padx=10, pady=10)
 
+        entryA = ct.CTkEntry(control_frame, width=150, textvariable=multiplicator)
+        entryA.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
+        sliderA_label = ct.CTkLabel(control_frame, text="Multiplier:")
+        sliderA_label.grid(row=1, column=0, padx=10, pady=10)
 
-        entryA = ct.CTkEntry(control_frame, width=100, textvariable=multiplicator)
-        entryA.grid(row=1, column=1)
+        # Increment
+        sliderC_label = ct.CTkLabel(control_frame, text="Increment:")
+        sliderC_label.grid(row=2, column=0, padx=10, pady=10)
+        entryC = ct.CTkEntry(control_frame, width=150, textvariable=increment)
+        entryC.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
         
-        sliderA_label = ct.CTkLabel(control_frame, text="Multiplikator")
-        sliderA_label.grid(row=1, column=0)
+        # Seed
+        sliderSeed_label = ct.CTkLabel(control_frame, text="Seed:")
+        sliderSeed_label.grid(row=3, column=0, padx=10, pady=10)
+        entrySeed = ct.CTkEntry(control_frame, width=150, textvariable=seed)
+        entrySeed.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
         
-        entryC = ct.CTkEntry(control_frame, width=100, textvariable=increment)
-        entryC.grid(row=0, column=3)
-        
-        sliderC_label = ct.CTkLabel(control_frame, text="Inkrement")
-        sliderC_label.grid(row=0, column=2)
-        
-        entrySeed =ct.CTkEntry(control_frame, width=100, textvariable=seed)
-        entrySeed.grid(row=1, column=3)
-        
-        sliderSeed_label = ct.CTkLabel(control_frame, text="Seed")
-        sliderSeed_label.grid(row=1, column=2)
+        # Sample Size
+        samplFr = ct.CTkFrame(control_frame)
+        samplFr.grid(row=4, column=1)
+        slider_label = ct.CTkLabel(control_frame, text="Sample Size:")
+        slider_label.grid(row=4, column=0, padx=10, pady=10)
+        sliderN = ct.CTkSlider(samplFr, from_=1, to=5000, variable=anzahl, command=update_all_visuals)
+        sliderN.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
-        sliderN = ct.CTkSlider(control_frame, from_=1, to=1000,variable=anzahl, command=update_all_visuals)
-        sliderN.grid(row=2, column=1)
+            
+        # Bins
+        binfram = ct.CTkFrame(control_frame)
+        binfram.grid(row=5, column=1)
+        slider_labell = ct.CTkLabel(control_frame, text="Bins:")
+        slider_labell.grid(row=5, column=0, padx=10, pady=10)
+        sliderB = ct.CTkSlider(binfram, from_=10, to=50, variable=binsC, command=update_all_visuals)
+        sliderB.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
-        slider_label = ct.CTkLabel(control_frame, text="Sample Size")
-        slider_label.grid(row=2, column=0)
+        global sam_labell, bin_labell
+        sam_labell = ct.CTkLabel(samplFr, text=anzahl.get())
+        sam_labell.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+        bin_labell = ct.CTkLabel(binfram, text=binsC.get())
+        bin_labell.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+ 
 
-        sliderB = ct.CTkSlider(control_frame, from_=10, to=50,variable=binsC, command=update_all_visuals)
-        sliderB.grid(row=2, column=3)
 
-        slider_labell = ct.CTkLabel(control_frame, text="Bins")
-        slider_labell.grid(row=2, column=2)
+        # Presets with checkboxes
         global c1, c2, c3
         c1 = ct.CTkCheckBox(control_frame, text="ZX81", onvalue=1, offvalue=0, command=set_preset_ZX81)
-        c1.grid(row=0, column=4)
+        c1.grid(row=0, column=3, padx=10, pady=10, sticky="w")
         c2 = ct.CTkCheckBox(control_frame, text="Borderland", onvalue=1, offvalue=0, command=set_preset_Borderland)
-        c2.grid(row=1, column=4)
+        c2.grid(row=1, column=3, padx=10, pady=10, sticky="w")
         c3 = ct.CTkCheckBox(control_frame, text="RANDU", onvalue=1, offvalue=0, command=set_preset_RANDU)
-        c3.grid(row=2, column=4)
+        c3.grid(row=2, column=3, padx=10, pady=10, sticky="w")
+
+        # Apply button
+        b = ct.CTkButton(control_frame, text="Apply", command=update_all_visuals)
+        b.grid(row=6, column=0, columnspan=2, padx=10, pady=20, sticky="ew")
+
 
     
     def update_function_label(_=None):
@@ -137,10 +161,18 @@ def set_up_LCG_tab(tab):
         for widget in histogram_frame.winfo_children():
             widget.destroy()
             
-    
+            # Mittelwert und Standardabweichung berechnen
+        duchschnit = np.mean(lcg_werte)
+        standert_abweichung = np.std(lcg_werte)
+
+        # Werte für die Normalverteilung berechnen
+        x = np.linspace(min(lcg_werte), max(lcg_werte), 1000)  # x-Achse
+        y = norm.pdf(x, duchschnit, standert_abweichung)  # Normalverteilung
+
         fig = Figure(figsize=(6,4))
         plot = fig.add_subplot()
         plot.hist(lcg_werte, alpha=0.5, bins=bins, density=True, label="LCG", color="blue", edgecolor="black")
+        plot.plot(x, y, color="red", linewidth=2, label="Normalisierungskurve")
         plot.set_title("Histogram LCG")
         plot.set_xlabel("Werte")
         plot.set_ylabel("Dichte")
@@ -231,23 +263,23 @@ def set_up_LCG_tab(tab):
 
     # Frames
     control_frame = ct.CTkFrame(tab)
-    control_frame.grid(row=0, column=0, padx=10, pady=10)
+    control_frame.grid(row=1, column=1, padx=10, pady=10)
     set_up_LCG_Controls()
     formula_frame = ct.CTkFrame(tab)
-    formula_frame.grid(row=0, column=1)
-    b = ct.CTkButton(control_frame, text="Apply", command=update_all_visuals)
-    b.grid(row=3, column=4)
+    formula_frame.grid(row=0, column=1, columnspan=2)
+    lab = ct.CTkLabel(tab, text="Linear Congruential Generator", font=("Roboto", 30))
+    lab.grid(row=0, column=0)
 
 
     histogram_frame = ct.CTkFrame(tab)
     histogram_frame.grid(row=1, column=0, padx=10, pady=10)
 
     scatter_frame = ct.CTkFrame(tab)
-    scatter_frame.grid(row=1, column=1, padx=10, pady=10)
-    b3d = ct.CTkButton(tab, text="3d", command=switche)
-    b3d.grid(row=2, column=1)
+    scatter_frame.grid(row=2, column=0, padx=10, pady=10)
 
-    autocorelation_frame = ct.CTkFrame(tab)
-    autocorelation_frame.grid(row=2, column=0, padx=10, pady=10)
+    b3d = ct.CTkButton(control_frame, text="3d", command=switche)
+    b3d.grid(row=6, column=3, padx=10, pady=20, sticky="ew")
+
+ 
 
     update_all_visuals()

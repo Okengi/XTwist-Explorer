@@ -10,27 +10,26 @@ class MersenneTwister():
         self.f = 1812433253
 
         self.MT = [0 for i in range(self.n)]
+        self.MT_Seeds = [0 for i in range(self.n)]
         self.pos_index = self.n+1
         self.lower_mask = 0x7FFFFFFF
         self.upper_mask = 0x80000000
 
         self.seed = seed
-        self.grow_input_seed()
+
         self.sow_seeds()
         
+    def reset(self):
+        self.MT=self.MT_Seeds
+        self.pos_index = self.n+1
      
-    def grow_input_seed(self):
-        self.g0 = self.seed
-        for i in range(51):
-            self.g0 = 69069 * self.g0 + 1 
-        
     def sow_seeds(self):
-        for i in range(623):
-            self.g0 = 69069 * self.g0 + 1
-            self.MT[i] = self.g0&0xffffffff
+        self.MT[0] = self.seed & 0xffffffff 
+        for i in range(1, self.n):
+            self.MT[i] = (self.f * (self.MT[i-1] ^ (self.MT[i-1] >> (self.w - 2))) + i) & 0xffffffff
+        self.MT_Seeds = self.MT
 
     def twist(self):
-        # 
         for i in range(263):
             x = (self.MT[i] & self.upper_mask) + (self.MT[(i+1) % self.n] & self.lower_mask)
             xa = x>>1
