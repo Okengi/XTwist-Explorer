@@ -139,22 +139,27 @@ def set_up_mt_tab(tab):
     
 
     def controls(_=None):
+        # ---
         sliderN = ct.CTkSlider(anzahlBinFrame, from_=1, to=10000,variable=anzahl, command=update_graphs)
         sliderN.grid(row=0, column=1)
-
         slider_label = ct.CTkLabel(anzahlBinFrame, text="Sample Size")
         slider_label.grid(row=0, column=0)
-
+        # ---
         sliderB = ct.CTkSlider(anzahlBinFrame, from_=10, to=50,variable=binsC, command=mersenne_twister_histogram)
         sliderB.grid(row=1, column=1)
-
         slider_labell = ct.CTkLabel(anzahlBinFrame, text="Bins")
         slider_labell.grid(row=1, column=0)
+        #---
+        seedLBL = ct.CTkLabel(anzahlBinFrame, text="Seed")
+        seedLBL.grid(row=2, column=0)
+        seedSL = ct.CTkSlider(anzahlBinFrame, from_=0, to=1000, variable=seed)
+        seedSL.grid(row=2, column=1)
     
 
     anzahl = tk.IntVar(value=1000)
     binsC = tk.IntVar(value=10)
     dreiD = tk.BooleanVar(value=False)
+    seed = tk.IntVar(value=0)
 
     # Top Label
     label = ct.CTkLabel(tab, text="Mersenne Twister", font=("Roboto", 30))

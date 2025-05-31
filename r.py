@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 
 # Daten für Histogramm erzeugen
-data = np.random.normal(loc=0, scale=1, size=1000)  # Mittelwert=0, Std.Abw=1
+data = np.random.normal(loc=0, scale=100, size=1000)  # Mittelwert=0, Std.Abw=1
 
 # Histogramm erzeugen
 bins = 20  # Anzahl der Bins

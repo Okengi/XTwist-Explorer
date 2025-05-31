@@ -13,8 +13,10 @@ window.geometry("1500x800")
 
 tab_view = ct.CTkTabview(window)
 tab_view.pack(fill='both', expand=True)
-tab_view.add("LCG")
+# TABS
 tab_view.add("Mersenne Twister")
+tab_view.add("LCG")
+tab_view.add("XOR Shift")
 
 
 LCG_tab = ct.CTkFrame(tab_view.tab("LCG"))
@@ -24,6 +26,9 @@ set_up_LCG_tab(LCG_tab)
 MT_tab = ct.CTkFrame(tab_view.tab("Mersenne Twister"))
 MT_tab.pack()
 set_up_mt_tab(MT_tab)  
+
+XOR_tab = ct.CTkFrame(tab_view.tab("XOR Shift"))
+XOR_tab.pack()
 
 # Vergleich_tab = ttk.Frame(tabs_controller)
 # tabs_controller.add(Vergleich_tab, text="Vergleich")
