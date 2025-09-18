@@ -1,5 +1,5 @@
 class MersenneTwister():
-    def __init__(self, seed:int=0):
+    def __init__(self, seed:int):
         # MT19937
         (self.w, self.n, self.m, self.r) = (32, 624, 397, 31)
         self.a = 0x9908B0DF
@@ -12,22 +12,27 @@ class MersenneTwister():
         self.MT = [0 for i in range(self.n)]
         self.MT_Seeds = [0 for i in range(self.n)]
         self.pos_index = self.n+1
-        self.lower_mask = 0x7FFFFFFF
-        self.upper_mask = 0x80000000
+        self.lower_mask = 0x7FFFFFFF #### wegen r 01111..
+        self.upper_mask = 0x80000000 #### wegen r 10000..
 
         self.seed = seed
+        print("Inital Seed")
+        print(self.seed)
 
         self.sow_seeds()
         
     def reset(self):
         self.MT=self.MT_Seeds
         self.pos_index = self.n+1
+        print("reset")
      
     def sow_seeds(self):
         self.MT[0] = self.seed & 0xffffffff 
         for i in range(1, self.n):
             self.MT[i] = (self.f * (self.MT[i-1] ^ (self.MT[i-1] >> (self.w - 2))) + i) & 0xffffffff
-        self.MT_Seeds = self.MT
+        
+        for i in range(len(self.MT)):
+            self.MT_Seeds[i] = self.MT[i]
 
     def twist(self):
         for i in range(263):
