@@ -8,14 +8,14 @@ import numpy as np
 
 def set_up_mt_tab(tab):
 
-    def canvas_update():
-        canvas.delete("all")
+    def update_seed_canvas(_=None):
+        SeedCanvas.delete("all")
 
-        if hasattr(canvas, "table_frame") and canvas.table_frame is not None:
-            canvas.table_frame.destroy()
+        if hasattr(SeedCanvas, "table_frame") and SeedCanvas.table_frame is not None:
+            SeedCanvas.table_frame.destroy()
 
-        canvas.table_frame = ct.CTkFrame(canvas, corner_radius=10, fg_color="transparent")
-        canvas.create_window((0, 0), window=canvas.table_frame, anchor="nw")
+        SeedCanvas.table_frame = ct.CTkFrame(SeedCanvas, corner_radius=10, fg_color="transparent")
+        SeedCanvas.create_window((0, 0), window=SeedCanvas.table_frame, anchor="nw")
         
         num_values_to_show = 50 # len(mt.MT_Seeds)
         
@@ -29,18 +29,18 @@ def set_up_mt_tab(tab):
                 if index >= num_values_to_show:
                     stop = True
                     break
-                cell_frame = ct.CTkFrame(canvas.table_frame, corner_radius=5, fg_color="#2b2b2b", border_width=1, border_color="black")
+                cell_frame = ct.CTkFrame(SeedCanvas.table_frame, corner_radius=5, fg_color="#2b2b2b", border_width=1, border_color="black")
                 cell_frame.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
 
                 value_label = ct.CTkLabel(cell_frame, text=f"{mt.MT_Seeds[index]}", font=("Roboto", 12), anchor="center", text_color="#e35b52")
                 value_label.pack(padx=5, pady=5)
 
         
-        canvas.table_frame.update_idletasks()
-        canvas.config(scrollregion=canvas.bbox("all"))
+        SeedCanvas.table_frame.update_idletasks()
+        SeedCanvas.config(scrollregion=SeedCanvas.bbox("all"))
         value_label.pack(padx=5, pady=5)
 
-    def setup_seed_frame():
+    def setup_seed_frame(_=None):
         for widget in MT_State_Frame.winfo_children():
             widget.destroy()
 
@@ -49,62 +49,72 @@ def set_up_mt_tab(tab):
 
         scrollable_frame = ct.CTkFrame(MT_State_Frame, corner_radius=10, fg_color="transparent")
         scrollable_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
-        global canvas
-        canvas = tk.Canvas(scrollable_frame, bg="#333333", highlightthickness=0) 
-        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        global SeedCanvas
+        SeedCanvas = tk.Canvas(scrollable_frame, bg="#333333", highlightthickness=0) 
+        SeedCanvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
 
-        scrollbar = ct.CTkScrollbar(scrollable_frame, command=canvas.yview, button_color="#e35b52",  button_hover_color="#f6756b")
+        scrollbar = ct.CTkScrollbar(scrollable_frame, command=SeedCanvas.yview, button_color="#e35b52",  button_hover_color="#f6756b")
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        canvas.configure(yscrollcommand=scrollbar.set)
+        SeedCanvas.configure(yscrollcommand=scrollbar.set)
 
-        canvas_update()
+        update_seed_canvas()
+    
+    def update_twist_canvas(_=None):
+        TwistCanvas.delete("all")
+
+        if hasattr(TwistCanvas, "table_frame") and TwistCanvas.table_frame is not None:
+            TwistCanvas.table_frame.destroy()
+
+        TwistCanvas.table_frame = ct.CTkFrame(TwistCanvas, corner_radius=10, fg_color="transparent")
+        TwistCanvas.create_window((0, 0), window=TwistCanvas.table_frame, anchor="nw")
         
+        num_values_to_show = 50 # len(mt.MT_Seeds)
+        
+        stop = False
 
-    def show_twisted():
+        for row in range(round(num_values_to_show / 4)):
+            if stop:
+                break
+            for col in range(4):
+                index = row * 4 + col
+                if index >= num_values_to_show:
+                    stop = True
+                    break
+                cell_frame = ct.CTkFrame(TwistCanvas.table_frame, corner_radius=5, fg_color="#2b2b2b", border_width=1, border_color="black")
+                cell_frame.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+
+                value_label = ct.CTkLabel(cell_frame, text=f"{mt.MT[index]}", font=("Roboto", 12), anchor="center", text_color="#e35b52")
+                value_label.pack(padx=5, pady=5)
+
+        
+        TwistCanvas.table_frame.update_idletasks()
+        TwistCanvas.config(scrollregion=TwistCanvas.bbox("all"))
+        value_label.pack(padx=5, pady=5)
+
+    def setup_twist_frame(_=None):
         for widget in MT_Twisted_Frame.winfo_children():
             widget.destroy()
 
-        stats_label = ct.CTkLabel(MT_Twisted_Frame, text="MT Twisted", font=("Roboto", 16))
+        stats_label = ct.CTkLabel(MT_Twisted_Frame, text="MT Twisted", font=("Roboto", 20))
         stats_label.pack(pady=10)
 
         scrollable_frame = ct.CTkFrame(MT_Twisted_Frame, corner_radius=10, fg_color="transparent")
         scrollable_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        canvas = tk.Canvas(scrollable_frame, bg="white", highlightthickness=0) 
-        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        global TwistCanvas
+        TwistCanvas = tk.Canvas(scrollable_frame, bg="#333333", highlightthickness=0) 
+        TwistCanvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        scrollbar = ct.CTkScrollbar(scrollable_frame, command=canvas.yview)
+        scrollbar = ct.CTkScrollbar(scrollable_frame, command=TwistCanvas.yview, button_color="#e35b52",  button_hover_color="#f6756b")
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        canvas.configure(yscrollcommand=scrollbar.set)
+        TwistCanvas.configure(yscrollcommand=scrollbar.set)
 
-        # Frame inside canvas to hold the table
-        table_frame = ct.CTkFrame(canvas, corner_radius=10, fg_color="transparent")
-        canvas.create_window((0, 0), window=table_frame, anchor="nw")
+        update_twist_canvas()
 
-        # Generate table data
-        num_values_to_show = 50
-        values_per_column = num_values_to_show // 4
-
-        for col in range(4):
-            start_index = col * values_per_column
-            end_index = start_index + values_per_column
-
-            for row, i in enumerate(range(start_index, end_index)):
-                cell_frame = ct.CTkFrame(table_frame, corner_radius=0, fg_color="transparent", border_width=1, border_color="black")
-                cell_frame.grid(row=row, column=col, padx=5, pady=5)
-
-                value_label = ct.CTkLabel(cell_frame, text=f"{mt.MT[i]}", font=("Roboto", 12), anchor="center", text_color="black")
-                value_label.pack(padx=5, pady=5)
-
-        table_frame.update_idletasks()
-        canvas.config(scrollregion=canvas.bbox("all"))
-        value_label.pack(padx=5, pady=5)
-
-
-    def mersenne_twister_histogram(_=None):
+    def update_histogram(_=None):
         for widget in mt_histogram_frame.winfo_children():
             widget.destroy()
 
@@ -112,21 +122,14 @@ def set_up_mt_tab(tab):
         ax = fig.add_subplot()
         ax.hist(values_for_diagrams, bins=binsC.get(), density=True, color="red", alpha=0.5, edgecolor="black")
         ax.set_title("Histogram")
-        ax.set_xlabel("werte")
+        ax.set_xlabel("Werte")
         ax.set_ylabel("Dichte")
 
         canvas = FigureCanvasTkAgg(fig, master=mt_histogram_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
-        counts, bin_edges = np.histogram(values_for_diagrams, bins=binsC.get(), density=True)
-        bin_widths = np.diff(bin_edges)
-
-        fläche = np.sum(counts * bin_widths)
-        print("Gesamtfläche:", fläche)
-
-    
-    def mersenne_twister_scatter(_=None):
+    def update_scatter_plot(_=None):
         if not dreiD.get():
             for widget in mt_scatter_frame.winfo_children():
                 widget.destroy()
@@ -154,20 +157,17 @@ def set_up_mt_tab(tab):
             canvas.draw()
             canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
     
-    
     def sample_size_change(_=None):
         n = anzahl.get()
         sample_size_value_label.configure(text=n)
         global values_for_diagrams
         values_for_diagrams = np.array(mt_values[:n])
-        mersenne_twister_histogram()
-        mersenne_twister_scatter()
+        update_histogram()
+        update_scatter_plot()
     
     def bins_value_change(_=None):
         bins_value_label.configure(text=binsC.get())
-        mersenne_twister_histogram()
-
- 
+        update_histogram()
 
     def switch(_=None):
         d = dreiD.get()
@@ -177,10 +177,9 @@ def set_up_mt_tab(tab):
         else:
             dreiD.set(True)
             switch_button.configure(text="2D Scatter Plot")
-        mersenne_twister_scatter()
+        update_scatter_plot()
         
-
-    def set_up_mt_controls(_=None):
+    def setup_controls(_=None):
         control_frame.grid_rowconfigure(tuple(range(5)), weight=1)
         control_frame.grid_columnconfigure(tuple(range(2)), weight=1)
 
@@ -225,15 +224,14 @@ def set_up_mt_tab(tab):
 
     def seed_change(_=None):
         seed=seed_entry.get()
-        
         global mt, mt_values , values_for_diagrams
         mt = MersenneTwister(int(seed))
         mt_values = np.array([mt.random() for _ in range(5000)])
         values_for_diagrams = np.array(mt_values[:anzahl.get()])
-        mersenne_twister_histogram()
-        mersenne_twister_scatter()
-        setup_seed_frame()
-        show_twisted()
+        update_histogram()
+        update_scatter_plot()
+        update_seed_canvas()
+        update_twist_canvas()
 
     anzahl = tk.IntVar(value=1000)
     binsC = tk.IntVar(value=10)
@@ -244,13 +242,9 @@ def set_up_mt_tab(tab):
     mt = MersenneTwister(0)
     mt_values = np.array([mt.random() for _ in range(5000)])
 
-    #show = np.empty(anzahl)
-    #for i in range(anzahl):
-    #    show[i] = mt_values[i]
     global values_for_diagrams
     values_for_diagrams = np.array(mt_values[:anzahl.get()])
 
-   
     # Mersenne Twister Label
     label = ct.CTkLabel(tab, text="Mersenne Twister", font=("Roboto", 30))
     label.grid(row=0, column=0, columnspan=3, pady=20)
@@ -270,14 +264,8 @@ def set_up_mt_tab(tab):
     control_frame = ct.CTkFrame(tab, corner_radius=10)
     control_frame.grid(row=1, column=2, padx=20, pady=20, sticky="nsew")
 
-    
-
-    # Initial Render
-    
     setup_seed_frame()
-    show_twisted()
-    mersenne_twister_histogram()
-    mersenne_twister_scatter()
-    
-    set_up_mt_controls()
-    
+    setup_twist_frame()
+    update_histogram()
+    update_scatter_plot()
+    setup_controls()

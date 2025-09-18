@@ -16,15 +16,12 @@ class MersenneTwister():
         self.upper_mask = 0x80000000 #### wegen r 10000..
 
         self.seed = seed
-        print("Inital Seed")
-        print(self.seed)
 
         self.sow_seeds()
         
     def reset(self):
         self.MT=self.MT_Seeds
         self.pos_index = self.n+1
-        print("reset")
      
     def sow_seeds(self):
         self.MT[0] = self.seed & 0xffffffff 
