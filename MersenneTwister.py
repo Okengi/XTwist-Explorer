@@ -32,7 +32,7 @@ class MersenneTwister():
             self.MT_Seeds[i] = self.MT[i]
 
     def twist(self):
-        for i in range(263):
+        for i in range(624):
             x = (self.MT[i] & self.upper_mask) + (self.MT[(i+1) % self.n] & self.lower_mask)
             xa = x>>1
             if(x % 2) != 0:

@@ -57,6 +57,7 @@ def set_up_LCG_tab(tab):
         canvas = FigureCanvasTkAgg(fig, master=scatter_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        
     def set_up_LCG_Controls():
         # Configure rows and columns for dynamic resizing
         control_frame.grid_rowconfigure(tuple(range(6)), weight=1)
@@ -159,18 +160,10 @@ def set_up_LCG_tab(tab):
         for widget in histogram_frame.winfo_children():
             widget.destroy()
             
-            # Mittelwert und Standardabweichung berechnen
-        duchschnit = np.mean(lcg_werte)
-        standert_abweichung = np.std(lcg_werte)
-
-        # Werte für die Normalverteilung berechnen
-        x = np.linspace(min(lcg_werte), max(lcg_werte), 1000)  # x-Achse
-        y = norm.pdf(x, duchschnit, standert_abweichung)  # Normalverteilung
 
         fig = Figure(figsize=(6,4))
         plot = fig.add_subplot()
         plot.hist(lcg_werte, alpha=0.5, bins=bins, density=True, label="LCG", color="blue", edgecolor="black")
-        plot.plot(x, y, color="red", linewidth=2, label="Normalisierungskurve")
         plot.set_title("Histogram LCG")
         plot.set_xlabel("Werte")
         plot.set_ylabel("Dichte")

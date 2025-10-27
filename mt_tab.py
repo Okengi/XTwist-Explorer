@@ -5,6 +5,8 @@ import customtkinter as ct
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
+from scipy.stats import pearsonr
+from autokorelation import autocorl
 
 def set_up_mt_tab(tab):
 
@@ -17,7 +19,7 @@ def set_up_mt_tab(tab):
         SeedCanvas.table_frame = ct.CTkFrame(SeedCanvas, corner_radius=10, fg_color="transparent")
         SeedCanvas.create_window((0, 0), window=SeedCanvas.table_frame, anchor="nw")
         
-        num_values_to_show = 623 # len(mt.MT_Seeds)
+        num_values_to_show = 624 # len(mt.MT_Seeds)
         
         stop = False
 
@@ -29,11 +31,18 @@ def set_up_mt_tab(tab):
                 if index >= num_values_to_show:
                     stop = True
                     break
-                cell_frame = ct.CTkFrame(SeedCanvas.table_frame, corner_radius=5, fg_color="#2b2b2b", border_width=1, border_color="black")
-                cell_frame.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+                if index == 0 or index == 1 or index == mt.m:
+                    cell_frame = ct.CTkFrame(SeedCanvas.table_frame, corner_radius=5, fg_color="#2b2b2b", border_width=1, border_color="black")
+                    cell_frame.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
 
-                value_label = ct.CTkLabel(cell_frame, text=f"{mt.MT_Seeds[index]}", font=("Roboto", 12), anchor="center", text_color="#e35b52")
-                value_label.pack(padx=5, pady=5)
+                    value_label = ct.CTkLabel(cell_frame, text=f"{mt.MT_Seeds[index]}", font=("Roboto", 12), anchor="center", text_color="#0000ff")
+                    value_label.pack(padx=5, pady=5)
+                else:
+                    cell_frame = ct.CTkFrame(SeedCanvas.table_frame, corner_radius=5, fg_color="#2b2b2b", border_width=1, border_color="black")
+                    cell_frame.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+
+                    value_label = ct.CTkLabel(cell_frame, text=f"{mt.MT_Seeds[index]}", font=("Roboto", 12), anchor="center", text_color="#e35b52")
+                    value_label.pack(padx=5, pady=5)
 
         
         SeedCanvas.table_frame.update_idletasks()
@@ -70,7 +79,7 @@ def set_up_mt_tab(tab):
         TwistCanvas.table_frame = ct.CTkFrame(TwistCanvas, corner_radius=10, fg_color="transparent")
         TwistCanvas.create_window((0, 0), window=TwistCanvas.table_frame, anchor="nw")
         
-        num_values_to_show = 50 # len(mt.MT_Seeds)
+        num_values_to_show = 624 # len(mt.MT_Seeds)
         
         stop = False
 
@@ -82,11 +91,18 @@ def set_up_mt_tab(tab):
                 if index >= num_values_to_show:
                     stop = True
                     break
-                cell_frame = ct.CTkFrame(TwistCanvas.table_frame, corner_radius=5, fg_color="#2b2b2b", border_width=1, border_color="black")
-                cell_frame.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+                if index == 0:
+                    cell_frame = ct.CTkFrame(TwistCanvas.table_frame, corner_radius=5, fg_color="#2b2b2b", border_width=1, border_color="black")
+                    cell_frame.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
 
-                value_label = ct.CTkLabel(cell_frame, text=f"{mt.MT[index]}", font=("Roboto", 12), anchor="center", text_color="#e35b52")
-                value_label.pack(padx=5, pady=5)
+                    value_label = ct.CTkLabel(cell_frame, text=f"{mt.MT[index]}", font=("Roboto", 12), anchor="center", text_color="#0004ff")
+                    value_label.pack(padx=5, pady=5)
+                else:
+                    cell_frame = ct.CTkFrame(TwistCanvas.table_frame, corner_radius=5, fg_color="#2b2b2b", border_width=1, border_color="black")
+                    cell_frame.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+
+                    value_label = ct.CTkLabel(cell_frame, text=f"{mt.MT[index]}", font=("Roboto", 12), anchor="center", text_color="#e35b52")
+                    value_label.pack(padx=5, pady=5)
 
         
         TwistCanvas.table_frame.update_idletasks()
@@ -129,10 +145,30 @@ def set_up_mt_tab(tab):
         canvas.draw()
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
+    def auto_plot(_=None):
+        for widget in mt_auto_plot.winfo_children():
+            widget.destroy()
+
+        rs = autocorl(values_for_diagrams)
+        fig = Figure(figsize=(6, 4))
+        ax = fig.add_subplot()
+        ax.stem(range(1, len(rs) + 1), rs, basefmt=" ")
+        ax.axhline(y=0, color='k', linestyle='-', linewidth=0.8)
+        #ax.axhline(y=1.96/np.sqrt(len(values_for_diagrams)), color='r', linestyle='--', linewidth=1, label='95% Konfidenzintervall')
+        #ax.axhline(y=-1.96/np.sqrt(len(values_for_diagrams)), color='r', linestyle='--', linewidth=1)
+        ax.set_xlabel('Lag')
+        ax.set_ylabel('r')
+        ax.set_title('Autokorrelation')
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+
+        canvas = FigureCanvasTkAgg(fig, master=mt_auto_plot)
+        canvas.draw()
+        canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
     def update_scatter_plot(_=None):
         for widget in mt_scatter_frame.winfo_children():
             widget.destroy()
-            
         if not dreiD.get():
             fig = Figure(figsize=(6, 4))
             ax = fig.add_subplot()
@@ -161,6 +197,7 @@ def set_up_mt_tab(tab):
         values_for_diagrams = np.array(mt_values[:n])
         update_histogram()
         update_scatter_plot()
+        auto_plot()
     
     def bins_value_change(_=None):
         bins_value_label.configure(text=binsC.get())
@@ -229,6 +266,7 @@ def set_up_mt_tab(tab):
         update_scatter_plot()
         update_seed_canvas()
         update_twist_canvas()
+        auto_plot()
 
     anzahl = tk.IntVar(value=1000)
     binsC = tk.IntVar(value=10)
@@ -259,10 +297,14 @@ def set_up_mt_tab(tab):
     MT_Twisted_Frame.grid(row=2, column=0, padx=20, pady=20, sticky="nsew")
     # Frame Controls
     control_frame = ct.CTkFrame(tab, corner_radius=10)
-    control_frame.grid(row=1, column=2, padx=20, pady=20, sticky="nsew")
+    control_frame.grid(row=1, column=2, padx=20, pady=20, sticky="nsw")
+    # Autocorelation Plot
+    mt_auto_plot = ct.CTkFrame(tab, corner_radius=10)
+    mt_auto_plot.grid(row=2, column= 2)
 
     setup_seed_frame()
     setup_twist_frame()
     update_histogram()
     update_scatter_plot()
     setup_controls()
+    auto_plot()
