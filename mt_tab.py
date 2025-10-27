@@ -17,7 +17,7 @@ def set_up_mt_tab(tab):
         SeedCanvas.table_frame = ct.CTkFrame(SeedCanvas, corner_radius=10, fg_color="transparent")
         SeedCanvas.create_window((0, 0), window=SeedCanvas.table_frame, anchor="nw")
         
-        num_values_to_show = 50 # len(mt.MT_Seeds)
+        num_values_to_show = 623 # len(mt.MT_Seeds)
         
         stop = False
 
@@ -130,10 +130,10 @@ def set_up_mt_tab(tab):
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
     def update_scatter_plot(_=None):
+        for widget in mt_scatter_frame.winfo_children():
+            widget.destroy()
+            
         if not dreiD.get():
-            for widget in mt_scatter_frame.winfo_children():
-                widget.destroy()
-
             fig = Figure(figsize=(6, 4))
             ax = fig.add_subplot()
             ax.scatter(values_for_diagrams[:-1], values_for_diagrams[1:], alpha=0.5, color="red")
@@ -145,9 +145,6 @@ def set_up_mt_tab(tab):
             canvas.draw()
             canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         else:
-            for widget in mt_scatter_frame.winfo_children():
-                widget.destroy()
-
             fig = Figure(figsize=(6, 4))
             ax = fig.add_subplot(projection="3d")
             ax.scatter(values_for_diagrams[:-2],values_for_diagrams[1:-1], values_for_diagrams[2:], alpha=0.5, color="red")
@@ -178,7 +175,7 @@ def set_up_mt_tab(tab):
             dreiD.set(True)
             switch_button.configure(text="2D Scatter Plot")
         update_scatter_plot()
-        
+
     def setup_controls(_=None):
         control_frame.grid_rowconfigure(tuple(range(5)), weight=1)
         control_frame.grid_columnconfigure(tuple(range(2)), weight=1)

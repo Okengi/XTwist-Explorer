@@ -123,8 +123,6 @@ def set_up_LCG_tab(tab):
         b = ct.CTkButton(control_frame, text="Apply", command=update_all_visuals)
         b.grid(row=6, column=0, columnspan=2, padx=10, pady=20, sticky="ew")
 
-
-    
     def update_function_label(_=None):
         formula = f"$X_{{n+1}} = ({multiplicator.get()} \\cdot X_n + {increment.get()})_{{mod}} {modules.get()}$"
         
@@ -181,42 +179,6 @@ def set_up_LCG_tab(tab):
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-    def autocorelation(_=None):
-        n = anzahl.get()
-        lcg_werte = [lcg.next() for _ in range(n)]
-        lcg_werte = np.array(lcg_werte)
-
-        for widget in autocorelation_frame.winfo_children():
-            widget.destroy()
-
-        freqs = np.fft.fft(lcg_werte - np.mean(lcg_werte))
-        # power = np.abs(freqs)**2
-        # fig = Figure(figsize=(6, 4))
-        # ax = fig.add_subplot()
-        # ax.plot(power[:len(power)//2])  # Plot only positive frequencies
-        # ax.set_title("Power Spectrum")
-
-        fig = Figure(figsize=(6, 4))
-        #ax = fig.add_subplot()
-        #stats.probplot(lcg_werte, dist="uniform", plot=ax)
-        plot = fig.add_subplot()
-        #plot.bar(range(len(freqs)), freqs, color='blue')
-
-        window_size = 50
-        entropy_values = [
-            scipy.stats.entropy(lcg_werte[i:i+window_size])
-            for i in range(len(lcg_werte) - window_size)
-        ]
-        plot.plot(entropy_values)
-        # fig = Figure(figsize=(6, 4))
-        # axs = fig.add_subplot()
-        # plot_acf(x=lcg_werte, ax=axs)
-
-        canvas = FigureCanvasTkAgg(fig, master=autocorelation_frame)
-        canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-
-
     def set_preset_RANDU(_=None):
         modules.set(2**31)
         multiplicator.set(65539)
@@ -270,7 +232,6 @@ def set_up_LCG_tab(tab):
     lab = ct.CTkLabel(tab, text="Linear Congruential Generator", font=("Roboto", 30))
     lab.grid(row=0, column=0)
 
-
     histogram_frame = ct.CTkFrame(tab)
     histogram_frame.grid(row=1, column=0, padx=10, pady=10)
 
@@ -279,7 +240,5 @@ def set_up_LCG_tab(tab):
 
     b3d = ct.CTkButton(control_frame, text="3d", command=switche)
     b3d.grid(row=6, column=3, padx=10, pady=20, sticky="ew")
-
- 
 
     update_all_visuals()
