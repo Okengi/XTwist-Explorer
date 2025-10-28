@@ -8,7 +8,7 @@ import numpy as np
 from scipy.stats import pearsonr
 from autokorelation import autocorl
 
-def set_up_mt_tab(tab):
+def set_up_mt_tab(tab: ct.CTkFrame):
 
     def update_seed_canvas(_=None):
         SeedCanvas.delete("all")
@@ -159,7 +159,7 @@ def set_up_mt_tab(tab):
         ax.set_xlabel('Lag')
         ax.set_ylabel('r')
         ax.set_title('Autokorrelation')
-        ax.legend()
+        #ax.legend()
         ax.grid(True, alpha=0.3)
 
         canvas = FigureCanvasTkAgg(fig, master=mt_auto_plot)
@@ -272,6 +272,8 @@ def set_up_mt_tab(tab):
     binsC = tk.IntVar(value=10)
     dreiD = tk.BooleanVar(value=False)
     seed = tk.StringVar(value="0")
+    tab.rowconfigure(tuple(range(3)), weight=1)
+    tab.columnconfigure(tuple(range(3)), weight=1)
 
     global mt
     mt = MersenneTwister(0)

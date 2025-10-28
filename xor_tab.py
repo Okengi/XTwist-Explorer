@@ -276,7 +276,7 @@ def setup_xor_shift_tab(tab: ct.CTkFrame):
         ax.set_xlabel('Lag')
         ax.set_ylabel('r')
         ax.set_title('Autokorrelation')
-        ax.legend()
+        #ax.legend()
         ax.grid(True, alpha=0.3)
 
         canvas = FigureCanvasTkAgg(fig, master=auto_plot_frame)
