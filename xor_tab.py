@@ -7,7 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
 import json
 import random
-from korelation import autocorl
+from autokorelation import autocorl
 
 def setup_xor_shift_tab(tab: ct.CTkFrame):
 
