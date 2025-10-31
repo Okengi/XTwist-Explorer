@@ -130,14 +130,14 @@ def set_up_LCG_tab(tab):
         for widget in formula_frame.winfo_children():
             widget.destroy()
 
-        fig = Figure(figsize=(5, 1), facecolor="#2b2b2b")
+        fig = Figure(figsize=(5, 1), facecolor="#dbdbdb")
         ax = fig.add_subplot()
         ax.set_facecolor("#2b2b2b") 
         ax.set_alpha(0.0)
         #ax.text(0.5, 0.5, formula, fontsize=12, ha="center", va="center", transform=ax.transAxes)
         ax.text(
                 0.5, 0.5, formula, fontsize=14, ha="center", va="center",
-                transform=ax.transAxes, color="white"
+                transform=ax.transAxes, color="black"
             )
         ax.axis("off")
 

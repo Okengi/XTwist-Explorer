@@ -1,10 +1,11 @@
-import customtkinter as ct
+import customtkinter as ct 
+import tkinter as tk
 from LCG_tab_setup import set_up_LCG_tab
 from mt_tab import set_up_mt_tab
 from xor_tab import setup_xor_shift_tab
 
 
-ct.set_appearance_mode("Dark") 
+ct.set_appearance_mode("Light") 
 ct.set_default_color_theme("green")
 
 def CenterWindowToDisplay(Screen: ct.CTk, width: int, height: int, scale_factor: float = 1.0):
@@ -22,7 +23,7 @@ window.focus()
 
 tab_view = ct.CTkTabview(window, segmented_button_selected_color="#e35b52", segmented_button_selected_hover_color="#783e3a")
 tab_view.pack(fill='both', expand=True)
-tab_view.add("XOR Shift")
+tab_view.add("XOR Shift") # Durch auskommentiern kann entschieden werden welche tabs vorkommen und welche nicht
 tab_view.add("Mersenne Twister")
 tab_view.add("LCG")
 
