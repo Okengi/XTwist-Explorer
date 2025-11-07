@@ -71,6 +71,7 @@ def setup_xor_shift_tab(tab: ct.CTkFrame):
         global XOR_Generator,values, values_for_diagrams
         XOR_Generator = XOR_Shift_Generator_32Bit(seed=int(seed.get()), a=a_entry_value.get(),b=b_entry_value.get(), c=c_entry_value.get() )
         values = np.array([XOR_Generator.random() for _ in range(5000)])
+        print(XOR_Generator.C)
         values_for_diagrams = np.array(values[:anzahl.get()])
         setup_scatter()
         setup_histogram()
@@ -106,7 +107,7 @@ def setup_xor_shift_tab(tab: ct.CTkFrame):
     def parameter_change(_=None):
         a_par = a_entry_value.get()
         b_par = b_entry_value.get()
-        c_par = b_entry_value.get()
+        c_par = c_entry_value.get()
         global XOR_Generator, values, values_for_diagrams
         XOR_Generator = None
         XOR_Generator = XOR_Shift_Generator_32Bit(seed=seed.get(), a=a_par, b=b_par, c=c_par)

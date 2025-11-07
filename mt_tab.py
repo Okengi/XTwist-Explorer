@@ -11,7 +11,7 @@ def set_up_mt_tab(tab: ct.CTkFrame):
     cell_color = "#dbdbdb"
     base_font = ("Roboto", 15, "bold")
     zustandsarray = 624
-
+    # Zustands Frames, beide funktionieren gleich
     def update_seed_canvas(_=None):
         SeedCanvas.delete("all")
 
@@ -25,10 +25,10 @@ def set_up_mt_tab(tab: ct.CTkFrame):
         
         stop = False
 
-        for row in range(round(num_values_to_show / 4)):
+        for row in range(round(num_values_to_show / 4)): # bestimmen der nötigen rheien
             if stop:
                 break
-            for col in range(4):
+            for col in range(4): # säulen
                 index = row * 4 + col
                 if index >= num_values_to_show:
                     stop = True
@@ -131,13 +131,15 @@ def set_up_mt_tab(tab: ct.CTkFrame):
         TwistCanvas.configure(yscrollcommand=scrollbar.set)
 
         update_twist_canvas()
-
+    # -------------------------------------------------------------------------------
+    # Histogramm
     def update_histogram(_=None):
         for widget in mt_histogram_frame.winfo_children():
-            widget.destroy()
+            widget.destroy() # Beim neu erstellen müssen die alten daten ja gelöscht werden
 
         fig = Figure(figsize=(6, 4), facecolor=frame_color)
         ax = fig.add_subplot()
+        # hist ist die vorgefertigte funktion von matplotlip für histogramme
         ax.hist(values_for_diagrams, bins=binsC.get(), density=True, color="red", alpha=0.5, edgecolor="black")
         ax.set_title("Histogram")
         ax.set_xlabel("Werte")
@@ -146,12 +148,12 @@ def set_up_mt_tab(tab: ct.CTkFrame):
         canvas = FigureCanvasTkAgg(fig, master=mt_histogram_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-
+    # Autokorelationsplot
     def auto_plot(_=None):
         for widget in mt_auto_plot.winfo_children():
             widget.destroy()
 
-        rs = autocorl(values_for_diagrams)
+        rs = autocorl(values_for_diagrams) # Dies function wird in einer anderen datei implementiert
         fig = Figure(figsize=(6, 4), facecolor=frame_color)
         ax = fig.add_subplot()
         ax.stem(range(1, len(rs) + 1), rs, 'r', basefmt=" ", markerfmt="ro")
@@ -167,7 +169,7 @@ def set_up_mt_tab(tab: ct.CTkFrame):
         canvas = FigureCanvasTkAgg(fig, master=mt_auto_plot)
         canvas.draw()
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-
+    # Streudiagramm
     def update_scatter_plot(_=None):
         for widget in mt_scatter_frame.winfo_children():
             widget.destroy()
