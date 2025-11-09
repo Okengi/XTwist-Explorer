@@ -194,7 +194,8 @@ def setup_xor_shift_tab(tab: ct.CTkFrame):
         setup_scatter()
 
     def random_parameter(_=None):
-        index = random.randint(0, 80)
+        index = random.randint(0, len(triplets)-1)
+        print(index)
         a_entry_value.set(triplets[index]['a'])
         b_entry_value.set(triplets[index]['b'])
         c_entry_value.set(triplets[index]['c'])
@@ -289,10 +290,14 @@ def setup_xor_shift_tab(tab: ct.CTkFrame):
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
     
     # Hier beginnt das inezialisierne des tabs
-    with open('xorshift_parameters.json', 'r') as f:
-        data = json.load(f)
-        global triplets
-        triplets = data['xorshift_32bit_parameters']['triplets']
+    try: 
+        with open('xorshift_parameters.json', 'r') as f:
+            data = json.load(f)
+            global triplets
+            triplets = data['xorshift_32bit_parameters']['triplets']
+    except:
+        # Falls der XTwist Explorer nicht im gleichen Ordner wie xorshift_paramerts liegt
+        triplets = [{"a": 1, "b": 3, "c": 10}] # als default variablen
     # Diese objecte müsse global sein weil sie die Unterfunktionen wie seed_change sonst nicht verwenden können
     global XOR_Generator, values, values_for_diagrams 
     XOR_Generator = XOR_Shift_Generator_32Bit(123, triplets[0]['a'], triplets[0]['b'], triplets[0]['c']) 
